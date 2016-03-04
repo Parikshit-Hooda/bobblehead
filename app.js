@@ -22,6 +22,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// expose files avalible in public/images so they can be viewed in the browser
+app.use('/public/images', express.static('public/images'));
+// use multer middleware to upload a photo to public/images
+var multer = require('multer');
+app.use(multer({dest: './public/images'}).single('userPhoto'));
+
 app.use('/', routes);
 app.use('/users', users);
 
