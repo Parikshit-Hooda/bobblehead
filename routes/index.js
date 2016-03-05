@@ -32,8 +32,15 @@ router.post('/', function (req, res, next) {
       return Promise.all(promises);
     })
     .then(function generateGif(dimensions){
-      console.log("TODO: generate GIF");
-      return imgSrc;
+      return new Promise(function (resolve, reject) {
+        var encoder = new gifEncoder(dimensions[0][0], dimensions[0][1]);
+        pngFileStream(req.file.path + '-?.png')
+          .pipe(encoder.createWriteStream({repeat: 0, delay: 400}))
+          .pipe(fs.createWriteStream(req.file.path+'.gif'))
+          .on('finish', function() {
+            resolve(req.file.path + '.gif');
+          });
+      })
     })
     .then(function displayGif(gifLocation) {
       res.render('index', {title: 'Done!', image: gifLocation});
